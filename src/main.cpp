@@ -104,6 +104,7 @@ Pinetime::Controllers::DateTime dateTimeController {settingsController};
 Pinetime::Drivers::Watchdog watchdog;
 Pinetime::Controllers::NotificationManager notificationManager;
 Pinetime::Controllers::MotionController motionController;
+Pinetime::SleepTracker::VanHeesSleepTracker sleepTracker;
 Pinetime::Controllers::AlarmController alarmController {dateTimeController};
 Pinetime::Controllers::TouchHandler touchHandler;
 Pinetime::Controllers::ButtonHandler buttonHandler;
@@ -137,6 +138,7 @@ Pinetime::System::SystemTask systemTask(spi,
                                         notificationManager,
                                         heartRateSensor,
                                         motionController,
+                                        sleepTracker,
                                         motionSensor,
                                         settingsController,
                                         heartRateController,

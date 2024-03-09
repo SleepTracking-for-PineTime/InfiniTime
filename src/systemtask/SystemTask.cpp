@@ -5,6 +5,7 @@
 #include "BootloaderVersion.h"
 #include "components/battery/BatteryController.h"
 #include "components/ble/BleController.h"
+#include "components/sleep/SleepTracker.h"
 #include "displayapp/TouchEvents.h"
 #include "drivers/Cst816s.h"
 #include "drivers/St7789.h"
@@ -44,6 +45,7 @@ SystemTask::SystemTask(Drivers::SpiMaster& spi,
                        Pinetime::Controllers::NotificationManager& notificationManager,
                        Pinetime::Drivers::Hrs3300& heartRateSensor,
                        Pinetime::Controllers::MotionController& motionController,
+                       Pinetime::SleepTracker::VanHeesSleepTracker& sleepTracker,
                        Pinetime::Drivers::Bma421& motionSensor,
                        Controllers::Settings& settingsController,
                        Pinetime::Controllers::HeartRateController& heartRateController,
@@ -67,6 +69,7 @@ SystemTask::SystemTask(Drivers::SpiMaster& spi,
     settingsController {settingsController},
     heartRateController {heartRateController},
     motionController {motionController},
+    sleepTracker {sleepTracker},
     displayApp {displayApp},
     heartRateApp(heartRateApp),
     fs {fs},
@@ -133,6 +136,7 @@ void SystemTask::Work() {
 
   motionSensor.Init();
   motionController.Init(motionSensor.DeviceType());
+  sleepTracker.Init(OnSleepTrackUpdate);
   settingsController.Init();
 
   displayApp.Register(this);
@@ -431,6 +435,7 @@ void SystemTask::UpdateMotion() {
   auto motionValues = motionSensor.Process();
 
   motionController.Update(motionValues.x, motionValues.y, motionValues.z, motionValues.steps);
+  sleepTracker.UpdateAccel(motionValues.x, motionValues.y, motionValues.z);
 
   if (settingsController.GetNotificationStatus() != Controllers::Settings::Notification::Sleep) {
     if ((settingsController.isWakeUpModeOn(Pinetime::Controllers::Settings::WakeUpMode::RaiseWrist) &&
@@ -511,4 +516,9 @@ void SystemTask::PushMessage(System::Messages msg) {
   } else {
     xQueueSend(systemTasksMsgQueue, &msg, portMAX_DELAY);
   }
+}
+
+void SystemTask::OnSleepTrackUpdate(uint8_t state) {
+  // TODO
+  (void)state;
 }

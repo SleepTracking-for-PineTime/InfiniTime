@@ -11,6 +11,7 @@
 #include <drivers/Bma421.h>
 #include <drivers/PinMap.h>
 #include <components/motion/MotionController.h>
+#include <components/sleep/SleepTracker.h>
 
 #include "systemtask/SystemMonitor.h"
 #include "components/ble/NimbleController.h"
@@ -65,6 +66,7 @@ namespace Pinetime {
                  Pinetime::Controllers::NotificationManager& notificationManager,
                  Pinetime::Drivers::Hrs3300& heartRateSensor,
                  Pinetime::Controllers::MotionController& motionController,
+                 Pinetime::SleepTracker::VanHeesSleepTracker& sleepTracker,
                  Pinetime::Drivers::Bma421& motionSensor,
                  Controllers::Settings& settingsController,
                  Pinetime::Controllers::HeartRateController& heartRateController,
@@ -114,6 +116,7 @@ namespace Pinetime {
       Pinetime::Controllers::Settings& settingsController;
       Pinetime::Controllers::HeartRateController& heartRateController;
       Pinetime::Controllers::MotionController& motionController;
+      Pinetime::SleepTracker::VanHeesSleepTracker& sleepTracker;
 
       Pinetime::Applications::DisplayApp& displayApp;
       Pinetime::Applications::HeartRateTask& heartRateApp;
@@ -137,6 +140,8 @@ namespace Pinetime {
       void UpdateMotion();
       bool stepCounterMustBeReset = false;
       static constexpr TickType_t batteryMeasurementPeriod = pdMS_TO_TICKS(10 * 60 * 1000);
+
+      static void OnSleepTrackUpdate(uint8_t state);
 
       SystemMonitor monitor;
     };
