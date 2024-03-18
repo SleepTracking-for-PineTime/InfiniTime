@@ -19,7 +19,7 @@ namespace Pinetime {
     template <>
     struct AppTraits<Apps::InfiniSleep> {
       static constexpr Apps app = Apps::InfiniSleep;
-      static constexpr const char* icon = Screens::Symbols::sleep;
+      static constexpr const char* icon = Screens::Symbols::bed;
 
       static Screens::Screen* Create(AppControllers& controllers) {
         return new Screens::InfiniSleep();
