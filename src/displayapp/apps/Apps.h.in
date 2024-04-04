@@ -44,7 +44,6 @@ namespace Pinetime {
       SettingShakeThreshold,
       SettingBluetooth,
       Error,
-      Weather,
       InfiniSleep
     };
 
