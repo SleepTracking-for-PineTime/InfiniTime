@@ -27,6 +27,7 @@
 #include "displayapp/screens/BatteryInfo.h"
 #include "displayapp/screens/Steps.h"
 #include "displayapp/screens/Dice.h"
+#include "displayapp/screens/Weather.h"
 #include "displayapp/screens/PassKey.h"
 #include "displayapp/screens/Error.h"
 #include "displayapp/screens/InfiniSleep.h"
@@ -47,6 +48,7 @@
 #include "displayapp/screens/settings/SettingSteps.h"
 #include "displayapp/screens/settings/SettingSetDateTime.h"
 #include "displayapp/screens/settings/SettingChimes.h"
+#include "displayapp/screens/settings/SettingHeartRate.h"
 #include "displayapp/screens/settings/SettingShakeThreshold.h"
 #include "displayapp/screens/settings/SettingBluetooth.h"
 
@@ -446,6 +448,7 @@ void DisplayApp::LoadScreen(Apps app, DisplayApp::FullRefreshDirections directio
       else {
         currentScreen.reset(userWatchFaces[0].create(controllers));
       }
+      settingsController.SetAppMenu(0);
     } break;
     case Apps::Error:
       currentScreen = std::make_unique<Screens::Error>(bootError);
@@ -508,6 +511,9 @@ void DisplayApp::LoadScreen(Apps app, DisplayApp::FullRefreshDirections directio
     case Apps::SettingWakeUp:
       currentScreen = std::make_unique<Screens::SettingWakeUp>(settingsController);
       break;
+    case Apps::SettingHeartRate:
+      currentScreen = std::make_unique<Screens::SettingHeartRate>(settingsController);
+      break;
     case Apps::SettingDisplay:
       currentScreen = std::make_unique<Screens::SettingDisplay>(this, settingsController);
       break;
@@ -561,9 +567,7 @@ void DisplayApp::PushMessage(Messages msg) {
   if (in_isr()) {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     xQueueSendFromISR(msgQueue, &msg, &xHigherPriorityTaskWoken);
-    if (xHigherPriorityTaskWoken == pdTRUE) {
-      portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-    }
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
   } else {
     TickType_t timeout = portMAX_DELAY;
     // Make xQueueSend() non-blocking if the message is a Notification message. We do this to avoid

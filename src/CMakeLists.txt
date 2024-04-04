@@ -379,6 +379,7 @@ list(APPEND SOURCE_FILES
         displayapp/screens/Navigation.cpp
         displayapp/screens/Metronome.cpp
         displayapp/screens/Motion.cpp
+        displayapp/screens/Weather.cpp
         displayapp/screens/FirmwareValidation.cpp
         displayapp/screens/ApplicationList.cpp
         displayapp/screens/Notifications.cpp
@@ -411,6 +412,7 @@ list(APPEND SOURCE_FILES
         displayapp/screens/settings/SettingWeatherFormat.cpp
         displayapp/screens/settings/SettingWakeUp.cpp
         displayapp/screens/settings/SettingDisplay.cpp
+        displayapp/screens/settings/SettingHeartRate.cpp
         displayapp/screens/settings/SettingSteps.cpp
         displayapp/screens/settings/SettingSetDateTime.cpp
         displayapp/screens/settings/SettingSetDate.cpp

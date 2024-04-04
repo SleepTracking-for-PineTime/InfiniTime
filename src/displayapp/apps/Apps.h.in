@@ -28,12 +28,14 @@ namespace Pinetime {
       Motion,
       Steps,
       Dice,
+      Weather,
       PassKey,
       QuickSettings,
       Settings,
       SettingWatchFace,
       SettingTimeFormat,
       SettingWeatherFormat,
+      SettingHeartRate,
       SettingDisplay,
       SettingWakeUp,
       SettingSteps,
@@ -41,9 +43,13 @@ namespace Pinetime {
       SettingChimes,
       SettingShakeThreshold,
       SettingBluetooth,
+<<<<<<< HEAD
       Error,
       Weather,
       InfiniSleep
+=======
+      Error
+>>>>>>> heartrate-in-background-pr/heartrate-measurements-in-background
     };
 
     enum class WatchFace : uint8_t {
