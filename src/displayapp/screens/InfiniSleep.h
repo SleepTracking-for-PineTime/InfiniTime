@@ -25,6 +25,7 @@ namespace Pinetime {
           );
           ~InfiniSleep();
 
+          void Refresh();
           void StartTracking();
         
         private:
@@ -33,6 +34,16 @@ namespace Pinetime {
           Pinetime::System::SystemTask& systemTask;
 
           lv_obj_t* btn_transferData;
+
+          lv_obj_t* label_heartRate;
+          lv_obj_t* label_motionX;
+          lv_obj_t* label_motionY;
+          lv_obj_t* label_motionZ;
+
+          lv_task_t* taskRefresh;
+
+          bool tracking_started = false;
+          uint8_t heart_rate;
         };
     }
 
