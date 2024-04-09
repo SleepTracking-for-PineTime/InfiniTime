@@ -27,19 +27,19 @@ InfiniSleep::InfiniSleep(
   lv_obj_set_event_cb(btn_transferData, btnTransferDataEventHandler);
 
   label_heartRate = lv_label_create(lv_scr_act(), nullptr);
-  lv_label_set_text_fmt(label_heartRate, "Heartrate: -1");
+  lv_label_set_text_fmt(label_heartRate, "Heartrate: ---");
   lv_obj_align_mid(label_heartRate, nullptr, LV_ALIGN_CENTER, 0, 20);
 
   label_motionX = lv_label_create(lv_scr_act(), nullptr);
-  lv_label_set_text_fmt(label_motionX, "Motion X: -1");
+  lv_label_set_text_fmt(label_motionX, "Motion X: ---");
   lv_obj_align_mid(label_motionX, label_heartRate, LV_ALIGN_OUT_BOTTOM_MID, 0, 30);
 
   label_motionY = lv_label_create(lv_scr_act(), nullptr);
-  lv_label_set_text_fmt(label_motionY, "Motion Y: -1");
+  lv_label_set_text_fmt(label_motionY, "Motion Y: ---");
   lv_obj_align_mid(label_motionY, label_heartRate, LV_ALIGN_OUT_BOTTOM_MID, 0, 50);
 
   label_motionZ = lv_label_create(lv_scr_act(), nullptr);
-  lv_label_set_text_fmt(label_motionZ, "Motion Z: -1");
+  lv_label_set_text_fmt(label_motionZ, "Motion Z: ---");
   lv_obj_align_mid(label_motionZ, label_heartRate, LV_ALIGN_OUT_BOTTOM_MID, 0, 70);
 
   taskRefresh = lv_task_create(RefreshTaskCallback, 100, LV_TASK_PRIO_MID, this);
@@ -57,7 +57,11 @@ void InfiniSleep::Refresh() {
   std::unique_ptr<ActivityPacket> activityPacket = std::make_unique<ActivityPacket>();
 
   activityPacket->heart_rate = heartRateController.HeartRate();
-  lv_label_set_text_fmt(label_heartRate, "Heartrate: %03d", activityPacket->heart_rate);
+  if (heartRateController.State() == Controllers::HeartRateController::States::Running) {
+    lv_label_set_text_fmt(label_heartRate, "Heartrate: %03d", activityPacket->heart_rate);
+  } else {
+    lv_label_set_text_fmt(label_heartRate, "---");
+  }
 
   activityPacket->motion_x = motionController.X();
   lv_label_set_text_fmt(label_motionX, "Motion X: %03d", activityPacket->motion_x);
