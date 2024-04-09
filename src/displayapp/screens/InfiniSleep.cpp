@@ -51,14 +51,24 @@ InfiniSleep::~InfiniSleep() {
 }
 
 void InfiniSleep::Refresh() {
-  if (heartRateController.State() == Controllers::HeartRateController::States::Running) {
-    heart_rate = heartRateController.HeartRate();
-    lv_label_set_text_fmt(label_heartRate, "Heartrate: %03d", heart_rate);
-  }
+  if (!tracking_started)
+    return;
 
-  lv_label_set_text_fmt(label_motionX, "Motion X: %03d", motionController.X());
-  lv_label_set_text_fmt(label_motionY, "Motion Y: %03d", motionController.Y());
-  lv_label_set_text_fmt(label_motionZ, "Motion Z: %03d", motionController.Z());
+  std::unique_ptr<ActivityPacket> activityPacket = std::make_unique<ActivityPacket>();
+
+  activityPacket->heart_rate = heartRateController.HeartRate();
+  lv_label_set_text_fmt(label_heartRate, "Heartrate: %03d", activityPacket->heart_rate);
+
+  activityPacket->motion_x = motionController.X();
+  lv_label_set_text_fmt(label_motionX, "Motion X: %03d", activityPacket->motion_x);
+
+  activityPacket->motion_y = motionController.Y();
+  lv_label_set_text_fmt(label_motionY, "Motion Y: %03d", activityPacket->motion_y);
+  
+  activityPacket->motion_z = motionController.Z();
+  lv_label_set_text_fmt(label_motionZ, "Motion Z: %03d", activityPacket->motion_z);
+
+  activityPackets.push_back(std::move(activityPacket));
 }
 
 void InfiniSleep::StartTracking() {

@@ -6,6 +6,8 @@
 #include "systemtask/SystemTask.h"
 #include "Symbols.h"
 #include <lvgl/src/lv_core/lv_obj.h>
+#include <memory>
+#include <vector>
 
 namespace Pinetime {
   namespace Controllers {
@@ -27,6 +29,13 @@ namespace Pinetime {
 
           void Refresh();
           void StartTracking();
+
+          struct ActivityPacket {
+            uint8_t heart_rate;
+            int16_t motion_x;
+            int16_t motion_y;
+            int16_t motion_z;
+          };
         
         private:
           Controllers::HeartRateController& heartRateController;
@@ -43,7 +52,7 @@ namespace Pinetime {
           lv_task_t* taskRefresh;
 
           bool tracking_started = false;
-          uint8_t heart_rate;
+          std::vector<std::unique_ptr<ActivityPacket> > activityPackets;
         };
     }
 
