@@ -48,6 +48,7 @@ namespace Pinetime {
           lv_obj_t* label_motionX;
           lv_obj_t* label_motionY;
           lv_obj_t* label_motionZ;
+          lv_obj_t* label_memory;
 
           lv_task_t* taskRefresh;
 
