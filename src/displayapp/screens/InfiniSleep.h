@@ -1,5 +1,6 @@
 #pragma once
 
+#include "components/sleep/SleepTracker.h"
 #include "displayapp/apps/Apps.h"
 #include "displayapp/screens/Screen.h"
 #include "displayapp/Controllers.h"
@@ -27,8 +28,8 @@ namespace Pinetime {
           );
           ~InfiniSleep();
 
-          void Refresh();
           void StartTracking();
+          void SleepStateUpdated(SleepTracker::SleepTracker::SleepState state);
 
           struct ActivityPacket {
             uint8_t heart_rate;
@@ -38,9 +39,12 @@ namespace Pinetime {
           };
         
         private:
+          void Refresh();
+
           Controllers::HeartRateController& heartRateController;
           Controllers::MotionController& motionController;
           Pinetime::System::SystemTask& systemTask;
+          SleepTracker::VanHeesSleepTracker sleepTracker;
 
           lv_obj_t* btn_transferData;
 
@@ -49,6 +53,7 @@ namespace Pinetime {
           lv_obj_t* label_motionY;
           lv_obj_t* label_motionZ;
           lv_obj_t* label_memory;
+          lv_obj_t* label_state;
 
           lv_task_t* taskRefresh;
 

@@ -141,7 +141,7 @@ namespace Pinetime {
       bool stepCounterMustBeReset = false;
       static constexpr TickType_t batteryMeasurementPeriod = pdMS_TO_TICKS(10 * 60 * 1000);
 
-      static void OnSleepTrackUpdate(uint8_t state);
+      static void OnSleepTrackUpdate(SleepTracker::SleepTracker::SleepState state);
 
       SystemMonitor monitor;
     };

@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <cmath>
 #include <numbers>
+#include <functional>
 
 #include "utility/CircularBuffer.h"
 
@@ -10,15 +11,18 @@ namespace Pinetime {
     namespace SleepTracker {
         class SleepTracker {
             public:
+                // Following https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/PAMS_v1.0/out/en/index-en.html#UUID-bc6ab7f6-d839-280d-9fd1-d380659e47aa
+                enum class SleepState : uint8_t { Awake, Sleep, REM, NonREM, LightSleep, DeepSleep, Undefined = 23 };
+
                 virtual void UpdateAccel(float x, float y, float z) = 0;
                 virtual ~SleepTracker() = default;
-                void Init(void (*state_update_callback)(uint8_t));
+                void Init(std::function<void(SleepState)> state_update_callback);
 
             private:
-                void (*callback)(uint8_t) = nullptr;
+                std::function<void(SleepState)> callback;
 
             protected:
-                void AnnounceUpdate(uint8_t state);
+                void AnnounceUpdate(SleepState state);
         };
 
         class VanHeesSleepTracker : public SleepTracker {
@@ -39,7 +43,7 @@ namespace Pinetime {
                 Utility::CircularBuffer<float, classification_hist_size> arm_angle_change_hist = {0};
                 Utility::CircularBuffer<float, (size_t)fs*seconds_per_update> arm_angle_hist = {0};
                 float arm_angle_mean_d = NAN;
-                uint8_t state = 255;
+                SleepState state = SleepState::Undefined;
 
                 static float ema(float x, float y);
                 static float ang(float x, float y, float z);

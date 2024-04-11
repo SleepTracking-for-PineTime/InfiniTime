@@ -523,7 +523,7 @@ void SystemTask::PushMessage(System::Messages msg) {
   }
 }
 
-void SystemTask::OnSleepTrackUpdate(uint8_t state) {
+void SystemTask::OnSleepTrackUpdate(SleepTracker::SleepTracker::SleepState state) {
   // TODO
   (void)state;
 }

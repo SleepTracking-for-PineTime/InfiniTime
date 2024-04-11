@@ -2,12 +2,12 @@
 
 namespace Pinetime {
     namespace SleepTracker {
-        void SleepTracker::Init(void (*state_update_callback)(uint8_t)) {
+        void SleepTracker::Init(std::function<void(SleepState)> state_update_callback) {
             callback = state_update_callback;
         }
 
-        void SleepTracker::AnnounceUpdate(uint8_t state) {
-            if (callback != nullptr)
+        void SleepTracker::AnnounceUpdate(SleepState state) {
+            if (callback)
                 callback(state);
         }
 
@@ -34,7 +34,7 @@ namespace Pinetime {
                     // change in arm angle since last window
                     float arm_angle_change = fabsf(arm_angle_mean - arm_angle_mean_d);
 
-                    // keep history of changes in arm angle for some longer duration
+                    // keep history of changes in arm angle for some longer durationnnn
                     arm_angle_change_hist++;
                     arm_angle_change_hist[0] = arm_angle_change;
 
@@ -45,10 +45,10 @@ namespace Pinetime {
                     } else {
                         // if arm angle has not changed significantly between two windows for the last
                         // <classification_hist_size> windows, classify as sleep. otherwise classify as awake
-                        uint8_t new_state = 1;
+                        SleepState new_state = SleepState::Sleep;
                         for (unsigned int i = 0; i < classification_hist_size; i++) {
                             if (arm_angle_change_hist[i] > arm_angle_threshold) {
-                                new_state = 0;
+                                new_state = SleepState::Awake;
                                 break;
                             }
                         }

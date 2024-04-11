@@ -46,7 +46,15 @@ InfiniSleep::InfiniSleep(
   lv_label_set_text_fmt(label_memory, "Free Memory: %d", xPortGetFreeHeapSize());
   lv_obj_align_mid(label_memory, btn_transferData, LV_ALIGN_OUT_TOP_MID, 0, 0);
 
-  taskRefresh = lv_task_create(RefreshTaskCallback, 30000, LV_TASK_PRIO_MID, this);
+  label_state = lv_label_create(lv_scr_act(), nullptr);
+  lv_label_set_text_fmt(label_state, "Sleep State: ---");
+  lv_obj_align_mid(label_state, btn_transferData, LV_ALIGN_OUT_TOP_MID, 0, 20);
+
+  taskRefresh = lv_task_create(RefreshTaskCallback, 100, LV_TASK_PRIO_MID, this);
+
+  sleepTracker.Init([this](SleepTracker::SleepTracker::SleepState state) {
+    SleepStateUpdated(state);
+  });
 }
 
 InfiniSleep::~InfiniSleep() {
@@ -60,25 +68,25 @@ void InfiniSleep::Refresh() {
   if (!tracking_started)
     return;
 
-  std::unique_ptr<ActivityPacket> activityPacket = std::make_unique<ActivityPacket>();
-
-  activityPacket->heart_rate = heartRateController.HeartRate();
   if (heartRateController.State() == Controllers::HeartRateController::States::Running) {
-    lv_label_set_text_fmt(label_heartRate, "Heartrate: %03d", activityPacket->heart_rate);
+    lv_label_set_text_fmt(label_heartRate, "Heartrate: %03d", heartRateController.HeartRate());
   } else {
     lv_label_set_text_fmt(label_heartRate, "Heartrate: ---");
   }
 
-  activityPacket->motion_x = motionController.X();
-  lv_label_set_text_fmt(label_motionX, "Motion X: %03d", activityPacket->motion_x);
+  lv_label_set_text_fmt(label_motionX, "Motion X: %03d", motionController.X());
+  lv_label_set_text_fmt(label_motionY, "Motion Y: %03d", motionController.Y());
+  lv_label_set_text_fmt(label_motionZ, "Motion Z: %03d", motionController.Z());
 
-  activityPacket->motion_y = motionController.Y();
-  lv_label_set_text_fmt(label_motionY, "Motion Y: %03d", activityPacket->motion_y);
-  
-  activityPacket->motion_z = motionController.Z();
-  lv_label_set_text_fmt(label_motionZ, "Motion Z: %03d", activityPacket->motion_z);
+  sleepTracker.UpdateAccel(motionController.X(), motionController.Y(), motionController.Z());
+}
 
-  activityPackets.push_back(std::move(activityPacket));
+void InfiniSleep::SleepStateUpdated(SleepTracker::SleepTracker::SleepState state) {
+  if (SleepTracker::SleepTracker::SleepState::Awake == state) {
+    lv_label_set_text_fmt(label_state, "Sleep State: Awake");
+  } else {
+    lv_label_set_text_fmt(label_state, "Sleep State: Asleep");
+  }
 }
 
 void InfiniSleep::StartTracking() {
