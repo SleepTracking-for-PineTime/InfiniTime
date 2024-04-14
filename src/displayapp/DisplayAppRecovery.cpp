@@ -126,3 +126,6 @@ void DisplayApp::Register(Pinetime::Controllers::MusicService* /*musicService*/)
 
 void DisplayApp::Register(Pinetime::Controllers::NavigationService* /*NavigationService*/) {
 }
+
+void DisplayApp::Register(Pinetime::Controllers::SleepActivityService* /*sleepActivityService*/) {
+}

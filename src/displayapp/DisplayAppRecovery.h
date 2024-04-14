@@ -36,6 +36,7 @@ namespace Pinetime {
     class SimpleWeatherService;
     class MusicService;
     class NavigationService;
+    class SleepActivityService;
   }
 
   namespace System {
@@ -71,6 +72,7 @@ namespace Pinetime {
       void Register(Pinetime::Controllers::SimpleWeatherService* weatherService);
       void Register(Pinetime::Controllers::MusicService* musicService);
       void Register(Pinetime::Controllers::NavigationService* NavigationService);
+      void Register(Pinetime::Controllers::SleepActivityService* sleepActivityService);
 
     private:
       TaskHandle_t taskHandle;

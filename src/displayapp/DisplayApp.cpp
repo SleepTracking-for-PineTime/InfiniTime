@@ -630,6 +630,10 @@ void DisplayApp::Register(Pinetime::Controllers::NavigationService* NavigationSe
   this->controllers.navigationService = NavigationService;
 }
 
+void DisplayApp::Register(Pinetime::Controllers::SleepActivityService* sleepActivityService) {
+  this->controllers.sleepActivityService = sleepActivityService;
+}
+
 void DisplayApp::ApplyBrightness() {
   auto brightness = settingsController.GetBrightness();
   if (brightness != Controllers::BrightnessController::Levels::Low && brightness != Controllers::BrightnessController::Levels::Medium &&
