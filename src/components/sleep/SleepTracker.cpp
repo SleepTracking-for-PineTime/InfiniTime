@@ -6,6 +6,10 @@ namespace Pinetime {
             callback = state_update_callback;
         }
 
+        uint8_t SleepTracker::GetCurrentSleepStage() {
+          return static_cast<uint8_t>(state);
+        }
+
         void SleepTracker::AnnounceUpdate(SleepState state) {
             if (callback)
                 callback(state);

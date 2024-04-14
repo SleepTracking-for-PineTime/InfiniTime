@@ -97,6 +97,7 @@ void NimbleController::Init() {
   immediateAlertService.Init();
   heartRateService.Init();
   motionService.Init();
+  sleepActivityService.Init();
   fsService.Init();
 
   int rc;

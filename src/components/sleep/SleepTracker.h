@@ -17,12 +17,15 @@ namespace Pinetime {
                 virtual void UpdateAccel(float x, float y, float z) = 0;
                 virtual ~SleepTracker() = default;
                 void Init(std::function<void(SleepState)> state_update_callback);
+                uint8_t GetCurrentSleepStage();
 
             private:
                 std::function<void(SleepState)> callback;
 
             protected:
                 void AnnounceUpdate(SleepState state);
+
+                SleepState state = SleepState::Undefined;
         };
 
         class VanHeesSleepTracker : public SleepTracker {
@@ -43,7 +46,6 @@ namespace Pinetime {
                 Utility::CircularBuffer<float, classification_hist_size> arm_angle_change_hist = {0};
                 Utility::CircularBuffer<float, (size_t)fs*seconds_per_update> arm_angle_hist = {0};
                 float arm_angle_mean_d = NAN;
-                SleepState state = SleepState::Undefined;
 
                 static float ema(float x, float y);
                 static float ang(float x, float y, float z);

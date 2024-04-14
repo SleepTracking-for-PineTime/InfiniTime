@@ -12,6 +12,7 @@
 
 namespace Pinetime {
   namespace Controllers {
+    class SleepActivityService;
     class HeartRateController;
     class MotionController;
   }
@@ -22,6 +23,7 @@ namespace Pinetime {
         class InfiniSleep : public Screen {
         public:
           InfiniSleep(
+            Controllers::SleepActivityService& sleepActivityService,
             Controllers::HeartRateController& heartRateController,
             Controllers::MotionController& motionController,
             System::SystemTask& systemTask
@@ -41,6 +43,7 @@ namespace Pinetime {
         private:
           void Refresh();
 
+          Controllers::SleepActivityService& sleepActivityService;
           Controllers::HeartRateController& heartRateController;
           Controllers::MotionController& motionController;
           Pinetime::System::SystemTask& systemTask;
@@ -68,7 +71,7 @@ namespace Pinetime {
       static constexpr const char* icon = Screens::Symbols::bed;
 
       static Screens::Screen* Create(AppControllers& controllers) {
-        return new Screens::InfiniSleep(controllers.heartRateController, controllers.motionController, *controllers.systemTask);
+        return new Screens::InfiniSleep(*controllers.sleepActivityService, controllers.heartRateController, controllers.motionController, *controllers.systemTask);
       };
     };
   }

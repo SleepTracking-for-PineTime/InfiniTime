@@ -1,5 +1,6 @@
 #include "InfiniSleep.h"
 
+#include <components/ble/SleepActivityService.h>
 #include <components/heartrate/HeartRateController.h>
 #include <components/motion/MotionController.h>
 
@@ -16,10 +17,11 @@ namespace {
 }
 
 InfiniSleep::InfiniSleep(
+  Controllers::SleepActivityService& sleepActivityService,
   Controllers::HeartRateController& heartRateController,
   Controllers::MotionController& motionController,
   System::SystemTask& systemTask)
-  : heartRateController {heartRateController}, motionController {motionController}, systemTask {systemTask} {
+  : sleepActivityService {sleepActivityService}, heartRateController {heartRateController}, motionController {motionController}, systemTask {systemTask} {
   btn_transferData = lv_btn_create(lv_scr_act(), nullptr);
   btn_transferData->user_data = this;
   lv_obj_set_height(btn_transferData, 100);
@@ -82,6 +84,8 @@ void InfiniSleep::Refresh() {
 }
 
 void InfiniSleep::SleepStateUpdated(SleepTracker::SleepTracker::SleepState state) {
+  sleepActivityService.OnNewSleepStage(static_cast<uint8_t>(state));
+
   if (SleepTracker::SleepTracker::SleepState::Awake == state) {
     lv_label_set_text_fmt(label_state, "Sleep State: Awake");
   } else {
