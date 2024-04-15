@@ -38,7 +38,7 @@ namespace Pinetime {
                     // change in arm angle since last window
                     float arm_angle_change = fabsf(arm_angle_mean - arm_angle_mean_d);
 
-                    // keep history of changes in arm angle for some longer durationnnn
+                    // keep history of changes in arm angle for some longer durationn
                     arm_angle_change_hist++;
                     arm_angle_change_hist[0] = arm_angle_change;
 
