@@ -10,6 +10,7 @@
 #include "components/ble/NotificationManager.h"
 #include "components/motion/MotionController.h"
 #include "components/motor/MotorController.h"
+#include "components/sleep/SleepController.h"
 #include "displayapp/screens/ApplicationList.h"
 #include "displayapp/screens/FirmwareUpdate.h"
 #include "displayapp/screens/FirmwareValidation.h"
@@ -82,6 +83,7 @@ DisplayApp::DisplayApp(Drivers::St7789& lcd,
                        Pinetime::Controllers::MotionController& motionController,
                        Pinetime::Controllers::AlarmController& alarmController,
                        Pinetime::Controllers::BrightnessController& brightnessController,
+                       Pinetime::Controllers::SleepController& sleepController,
                        Pinetime::Controllers::TouchHandler& touchHandler,
                        Pinetime::Controllers::FS& filesystem)
   : lcd {lcd},
@@ -97,6 +99,7 @@ DisplayApp::DisplayApp(Drivers::St7789& lcd,
     motionController {motionController},
     alarmController {alarmController},
     brightnessController {brightnessController},
+    sleepController {sleepController},
     touchHandler {touchHandler},
     filesystem {filesystem},
     lvgl {lcd, filesystem},
@@ -113,6 +116,7 @@ DisplayApp::DisplayApp(Drivers::St7789& lcd,
                  brightnessController,
                  nullptr,
                  nullptr,
+                 sleepController,
                  filesystem,
                  timer,
                  nullptr,

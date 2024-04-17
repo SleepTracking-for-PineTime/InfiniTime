@@ -449,6 +449,7 @@ list(APPEND SOURCE_FILES
         components/brightness/BrightnessController.cpp
         components/motion/MotionController.cpp
         components/sleep/SleepTracker.cpp
+        components/sleep/SleepController.cpp
         components/ble/NimbleController.cpp
         components/ble/DeviceInformationService.cpp
         components/ble/CurrentTimeClient.cpp
@@ -520,6 +521,7 @@ list(APPEND RECOVERY_SOURCE_FILES
         components/brightness/BrightnessController.cpp
         components/motion/MotionController.cpp
         components/sleep/SleepTracker.cpp
+        components/sleep/SleepController.cpp
         components/ble/NimbleController.cpp
         components/ble/DeviceInformationService.cpp
         components/ble/CurrentTimeClient.cpp
@@ -641,6 +643,7 @@ set(INCLUDE_FILES
         components/brightness/BrightnessController.h
         components/motion/MotionController.h
         components/sleep/SleepTracker.h
+        components/sleep/SleepController.h
         components/firmwarevalidator/FirmwareValidator.h
         components/ble/BleController.h
         components/ble/NotificationManager.h

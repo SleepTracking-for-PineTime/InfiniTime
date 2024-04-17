@@ -1,12 +1,15 @@
 #include "SleepActivityService.h"
 
+#include <components/sleep/SleepController.h>
+
 int sleepActivityServiceCallback(uint16_t /*connHandle*/, uint16_t attrHandle, struct ble_gatt_access_ctxt* ctxt, void* arg) {
   auto* sleepActivityService = static_cast<Pinetime::Controllers::SleepActivityService*>(arg);
   return sleepActivityService->OnSleepStageRequested(attrHandle, ctxt);
 }
 
-Pinetime::Controllers::SleepActivityService::SleepActivityService()
- :  characteristicDefinition {{.uuid = &sleepStageCharacteristicUuid.u,
+Pinetime::Controllers::SleepActivityService::SleepActivityService(SleepController& sleepController)
+ :  sleepController {sleepController},
+    characteristicDefinition {{.uuid = &sleepStageCharacteristicUuid.u,
                               .access_cb = sleepActivityServiceCallback,
                               .arg = this,
                               .flags = BLE_GATT_CHR_F_READ,
@@ -16,6 +19,9 @@ Pinetime::Controllers::SleepActivityService::SleepActivityService()
       {.type = BLE_GATT_SVC_TYPE_PRIMARY, .uuid = &sleepActivityServiceUuid.u, .characteristics = characteristicDefinition},
       {0}
     } {
+  // TODO: Bad design, as controller and service depend on each other
+  // It might be possible to let NimbleController be the bridge between the controller and the service
+  sleepController.SetSleepActivityService(this);
 }
 
 void Pinetime::Controllers::SleepActivityService::Init() {

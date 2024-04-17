@@ -17,6 +17,7 @@
 #include "components/ble/BleController.h"
 #include "components/ble/NotificationManager.h"
 #include "components/datetime/DateTimeController.h"
+#include "components/sleep/SleepController.h"
 #include "components/fs/FS.h"
 #include "systemtask/SystemTask.h"
 
@@ -30,6 +31,7 @@ NimbleController::NimbleController(Pinetime::System::SystemTask& systemTask,
                                    Pinetime::Drivers::SpiNorFlash& spiNorFlash,
                                    HeartRateController& heartRateController,
                                    MotionController& motionController,
+                                   SleepController& sleepController,
                                    FS& fs)
   : systemTask {systemTask},
     bleController {bleController},
@@ -48,6 +50,7 @@ NimbleController::NimbleController(Pinetime::System::SystemTask& systemTask,
     immediateAlertService {systemTask, notificationManager},
     heartRateService {*this, heartRateController},
     motionService {*this, motionController},
+    sleepActivityService {sleepController},
     fsService {systemTask, fs},
     serviceDiscovery({&currentTimeClient, &alertNotificationClient}) {
 }

@@ -6,6 +6,7 @@
 #include "components/battery/BatteryController.h"
 #include "components/ble/BleController.h"
 #include "components/sleep/SleepTracker.h"
+#include "components/sleep/SleepController.h"
 #include "displayapp/TouchEvents.h"
 #include "drivers/Cst816s.h"
 #include "drivers/St7789.h"
@@ -46,6 +47,7 @@ SystemTask::SystemTask(Drivers::SpiMaster& spi,
                        Pinetime::Drivers::Hrs3300& heartRateSensor,
                        Pinetime::Controllers::MotionController& motionController,
                        Pinetime::SleepTracker::VanHeesSleepTracker& sleepTracker,
+                       Pinetime::Controllers::SleepController& sleepController,
                        Pinetime::Drivers::Bma421& motionSensor,
                        Controllers::Settings& settingsController,
                        Pinetime::Controllers::HeartRateController& heartRateController,
@@ -70,6 +72,7 @@ SystemTask::SystemTask(Drivers::SpiMaster& spi,
     heartRateController {heartRateController},
     motionController {motionController},
     sleepTracker {sleepTracker},
+    sleepController {sleepController},
     displayApp {displayApp},
     heartRateApp(heartRateApp),
     fs {fs},
@@ -83,6 +86,7 @@ SystemTask::SystemTask(Drivers::SpiMaster& spi,
                      spiNorFlash,
                      heartRateController,
                      motionController,
+                     sleepController,
                      fs) {
 }
 
@@ -136,7 +140,7 @@ void SystemTask::Work() {
 
   motionSensor.Init();
   motionController.Init(motionSensor.DeviceType());
-  sleepTracker.Init(OnSleepTrackUpdate);
+  sleepController.Init(&sleepTracker, heartRateController, motionController);
   settingsController.Init();
 
   displayApp.Register(this);
@@ -522,9 +526,4 @@ void SystemTask::PushMessage(System::Messages msg) {
   } else {
     xQueueSend(systemTasksMsgQueue, &msg, portMAX_DELAY);
   }
-}
-
-void SystemTask::OnSleepTrackUpdate(SleepTracker::SleepTracker::SleepState state) {
-  // TODO
-  (void)state;
 }

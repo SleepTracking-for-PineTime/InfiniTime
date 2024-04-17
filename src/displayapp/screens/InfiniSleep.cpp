@@ -1,8 +1,7 @@
 #include "InfiniSleep.h"
 
-#include <components/ble/SleepActivityService.h>
-#include <components/heartrate/HeartRateController.h>
-#include <components/motion/MotionController.h>
+#include <components/sleep/SleepController.h>
+#include <FreeRTOS.h>
 
 using namespace Pinetime::Applications::Screens;
 
@@ -11,22 +10,21 @@ namespace {
       auto* screen = static_cast<InfiniSleep*>(obj->user_data);
 
       if (event == LV_EVENT_CLICKED) {
-        screen->StartTracking();
+        screen->ToggleTracking();
       }
   }
 }
 
-InfiniSleep::InfiniSleep(
-  Controllers::SleepActivityService& sleepActivityService,
-  Controllers::HeartRateController& heartRateController,
-  Controllers::MotionController& motionController,
-  System::SystemTask& systemTask)
-  : sleepActivityService {sleepActivityService}, heartRateController {heartRateController}, motionController {motionController}, systemTask {systemTask} {
+InfiniSleep::InfiniSleep(Controllers::SleepController& sleepController)
+  : sleepController {sleepController} {
   btn_transferData = lv_btn_create(lv_scr_act(), nullptr);
   btn_transferData->user_data = this;
   lv_obj_set_height(btn_transferData, 100);
   lv_obj_align(btn_transferData, nullptr, LV_ALIGN_IN_TOP_MID, 0, 10);
   lv_obj_set_event_cb(btn_transferData, btnTransferDataEventHandler);
+
+  label_btnStartStop = lv_label_create(lv_scr_act(), nullptr);
+  lv_obj_align_mid(label_btnStartStop, btn_transferData, LV_ALIGN_CENTER, 0, 0);
 
   label_heartRate = lv_label_create(lv_scr_act(), nullptr);
   lv_label_set_text_fmt(label_heartRate, "Heartrate: ---");
@@ -54,9 +52,11 @@ InfiniSleep::InfiniSleep(
 
   taskRefresh = lv_task_create(RefreshTaskCallback, 100, LV_TASK_PRIO_MID, this);
 
-  sleepTracker.Init([this](SleepTracker::SleepTracker::SleepState state) {
-    SleepStateUpdated(state);
-  });
+  if (sleepController.GetState() == Controllers::SleepController::States::Running) {
+    SleepTrackerStarted();
+  } else {
+    SleepTrackerStopped();
+  }
 }
 
 InfiniSleep::~InfiniSleep() {
@@ -69,23 +69,9 @@ void InfiniSleep::Refresh() {
 
   if (!tracking_started)
     return;
-
-  if (heartRateController.State() == Controllers::HeartRateController::States::Running) {
-    lv_label_set_text_fmt(label_heartRate, "Heartrate: %03d", heartRateController.HeartRate());
-  } else {
-    lv_label_set_text_fmt(label_heartRate, "Heartrate: ---");
-  }
-
-  lv_label_set_text_fmt(label_motionX, "Motion X: %03d", motionController.X());
-  lv_label_set_text_fmt(label_motionY, "Motion Y: %03d", motionController.Y());
-  lv_label_set_text_fmt(label_motionZ, "Motion Z: %03d", motionController.Z());
-
-  sleepTracker.UpdateAccel(motionController.X(), motionController.Y(), motionController.Z());
 }
 
 void InfiniSleep::SleepStateUpdated(SleepTracker::SleepTracker::SleepState state) {
-  sleepActivityService.OnNewSleepStage(static_cast<uint8_t>(state));
-
   if (SleepTracker::SleepTracker::SleepState::Awake == state) {
     lv_label_set_text_fmt(label_state, "Sleep State: Awake");
   } else {
@@ -93,18 +79,26 @@ void InfiniSleep::SleepStateUpdated(SleepTracker::SleepTracker::SleepState state
   }
 }
 
-void InfiniSleep::StartTracking() {
+void InfiniSleep::ToggleTracking() {
   Refresh();
 
   if (!tracking_started) {
-    heartRateController.Start();
-    systemTask.PushMessage(Pinetime::System::Messages::DisableSleeping);
-    
-    tracking_started = true;
-  } else {
-    heartRateController.Stop();
-    systemTask.PushMessage(Pinetime::System::Messages::EnableSleeping);
+    sleepController.Start();
 
-    tracking_started = false;
+    SleepTrackerStarted();
+  } else {
+    sleepController.Stop();
+
+    SleepTrackerStopped();
   }
+}
+
+void InfiniSleep::SleepTrackerStarted() {
+  tracking_started = true;
+  lv_label_set_text_fmt(label_btnStartStop, "Stop");
+}
+
+void InfiniSleep::SleepTrackerStopped() {
+  tracking_started = false;
+  lv_label_set_text_fmt(label_btnStartStop, "Start");
 }

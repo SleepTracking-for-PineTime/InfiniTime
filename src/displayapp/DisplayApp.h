@@ -9,6 +9,7 @@
 #include "displayapp/TouchEvents.h"
 #include "components/brightness/BrightnessController.h"
 #include "components/motor/MotorController.h"
+#include "components/sleep/SleepController.h"
 #include "components/firmwarevalidator/FirmwareValidator.h"
 #include "components/settings/Settings.h"
 #include "displayapp/screens/Screen.h"
@@ -38,6 +39,7 @@ namespace Pinetime {
     class NotificationManager;
     class HeartRateController;
     class MotionController;
+    class SleepController;
     class TouchHandler;
     class SimpleWeatherService;
   }
@@ -65,6 +67,7 @@ namespace Pinetime {
                  Pinetime::Controllers::MotionController& motionController,
                  Pinetime::Controllers::AlarmController& alarmController,
                  Pinetime::Controllers::BrightnessController& brightnessController,
+                 Pinetime::Controllers::SleepController& sleepController,
                  Pinetime::Controllers::TouchHandler& touchHandler,
                  Pinetime::Controllers::FS& filesystem);
       void Start(System::BootErrors error);
@@ -95,6 +98,7 @@ namespace Pinetime {
       Pinetime::Controllers::MotionController& motionController;
       Pinetime::Controllers::AlarmController& alarmController;
       Pinetime::Controllers::BrightnessController& brightnessController;
+      Pinetime::Controllers::SleepController& sleepController;
       Pinetime::Controllers::TouchHandler& touchHandler;
       Pinetime::Controllers::FS& filesystem;
 

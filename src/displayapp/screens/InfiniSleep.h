@@ -10,9 +10,7 @@
 
 namespace Pinetime {
   namespace Controllers {
-    class SleepActivityService;
-    class HeartRateController;
-    class MotionController;
+    class SleepController;
   }
 
   namespace Applications {
@@ -20,28 +18,22 @@ namespace Pinetime {
 
         class InfiniSleep : public Screen {
         public:
-          InfiniSleep(
-            Controllers::SleepActivityService& sleepActivityService,
-            Controllers::HeartRateController& heartRateController,
-            Controllers::MotionController& motionController,
-            System::SystemTask& systemTask
-          );
+          InfiniSleep(Controllers::SleepController& sleepController);
           ~InfiniSleep();
 
-          void StartTracking();
+          void ToggleTracking();
           void SleepStateUpdated(SleepTracker::SleepTracker::SleepState state);
         
         private:
           void Refresh();
+          void SleepTrackerStarted();
+          void SleepTrackerStopped();
 
-          Controllers::SleepActivityService& sleepActivityService;
-          Controllers::HeartRateController& heartRateController;
-          Controllers::MotionController& motionController;
-          Pinetime::System::SystemTask& systemTask;
-          SleepTracker::VanHeesSleepTracker sleepTracker;
+          Controllers::SleepController& sleepController;
 
           lv_obj_t* btn_transferData;
 
+          lv_obj_t* label_btnStartStop;
           lv_obj_t* label_heartRate;
           lv_obj_t* label_motionX;
           lv_obj_t* label_motionY;
@@ -61,7 +53,7 @@ namespace Pinetime {
       static constexpr const char* icon = Screens::Symbols::bed;
 
       static Screens::Screen* Create(AppControllers& controllers) {
-        return new Screens::InfiniSleep(*controllers.sleepActivityService, controllers.heartRateController, controllers.motionController, *controllers.systemTask);
+        return new Screens::InfiniSleep(controllers.sleepController);
       };
     };
   }

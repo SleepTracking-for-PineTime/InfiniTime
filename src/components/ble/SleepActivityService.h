@@ -8,16 +8,19 @@
 
 namespace Pinetime {
   namespace Controllers {
+    class SleepController;
 
     class SleepActivityService {
     public:
-      SleepActivityService();
+      SleepActivityService(SleepController& sleepController);
 
       void Init();
       int OnSleepStageRequested(uint16_t attributeHandle, ble_gatt_access_ctxt* context);
       void OnNewSleepStage(uint8_t sleepStage);
 
     private:
+      SleepController& sleepController;
+
       // 00060000-78fc-48fe-8e23-433b3a1942d0
       static constexpr ble_uuid128_t BaseUuid() {
           return CharUuid(0x00, 0x00);

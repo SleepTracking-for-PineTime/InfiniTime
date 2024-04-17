@@ -37,6 +37,7 @@ namespace Pinetime {
     class MusicService;
     class NavigationService;
     class SleepActivityService;
+    class SleepController;
   }
 
   namespace System {
@@ -59,6 +60,7 @@ namespace Pinetime {
                  Pinetime::Controllers::MotionController& motionController,
                  Pinetime::Controllers::AlarmController& alarmController,
                  Pinetime::Controllers::BrightnessController& brightnessController,
+                 Pinetime::Controllers::SleepController& sleepController,
                  Pinetime::Controllers::TouchHandler& touchHandler,
                  Pinetime::Controllers::FS& filesystem);
       void Start();

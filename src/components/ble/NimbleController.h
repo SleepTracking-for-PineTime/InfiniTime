@@ -38,6 +38,7 @@ namespace Pinetime {
     class Ble;
     class DateTime;
     class NotificationManager;
+    class SleepController;
 
     class NimbleController {
 
@@ -50,6 +51,7 @@ namespace Pinetime {
                        Pinetime::Drivers::SpiNorFlash& spiNorFlash,
                        HeartRateController& heartRateController,
                        MotionController& motionController,
+                       SleepController& sleepController,
                        FS& fs);
       void Init();
       void StartAdvertising();
