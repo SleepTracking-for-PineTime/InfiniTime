@@ -32,6 +32,7 @@ void SleepController::Stop() {
   lv_task_del(taskUpdate);
 
   controllerState = States::Stopped;
+  sleepState = 23;
 }
 
 void SleepController::Update() {

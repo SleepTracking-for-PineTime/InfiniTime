@@ -436,6 +436,7 @@ void SystemTask::UpdateMotion() {
 
   if (state == SystemTaskState::Sleeping && !(settingsController.isWakeUpModeOn(Pinetime::Controllers::Settings::WakeUpMode::RaiseWrist) ||
                                               settingsController.isWakeUpModeOn(Pinetime::Controllers::Settings::WakeUpMode::Shake) ||
+                                              sleepController.GetState() == Pinetime::Controllers::SleepController::States::Running ||
                                               motionController.GetService()->IsMotionNotificationSubscribed())) {
     return;
   }
