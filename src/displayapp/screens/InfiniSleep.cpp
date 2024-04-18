@@ -66,9 +66,6 @@ InfiniSleep::~InfiniSleep() {
 
 void InfiniSleep::Refresh() {
   lv_label_set_text_fmt(label_memory, "Free Memory: %d", xPortGetFreeHeapSize());
-
-  if (!tracking_started)
-    return;
 }
 
 void InfiniSleep::SleepStateUpdated(SleepTracker::SleepTracker::SleepState state) {

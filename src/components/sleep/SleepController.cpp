@@ -33,6 +33,7 @@ void SleepController::Stop() {
 
   controllerState = States::Stopped;
   sleepState = 23;
+  sleepActivityService->OnNewSleepStage(sleepState);
 }
 
 void SleepController::Update() {
