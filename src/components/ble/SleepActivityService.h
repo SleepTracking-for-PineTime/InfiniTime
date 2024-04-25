@@ -3,22 +3,29 @@
 #define min // workaround: nimble's min/max macros conflict with libstdc++
 #define max
 #include <host/ble_gap.h>
+#include <atomic>
 #undef max
 #undef min
 
 namespace Pinetime {
   namespace Controllers {
     class SleepController;
+    class NimbleController;
 
     class SleepActivityService {
     public:
-      SleepActivityService(SleepController& sleepController);
+      SleepActivityService(NimbleController& nimble, SleepController& sleepController);
 
       void Init();
       int OnSleepStageRequested(uint16_t attributeHandle, ble_gatt_access_ctxt* context);
       void OnNewSleepStage(uint8_t sleepStage);
 
+      void SubscribeNotification(uint16_t attributeHandle);
+      void UnsubscribeNotification(uint16_t attributeHandle);
+      bool IsSleepStageNotificationSubscribed() const;
+
     private:
+      NimbleController& nimble;
       SleepController& sleepController;
 
       // 00060000-78fc-48fe-8e23-433b3a1942d0
@@ -40,6 +47,7 @@ namespace Pinetime {
       const struct ble_gatt_svc_def serviceDefinition[2];
 
       uint16_t sleepStageHandle;
+      std::atomic_bool sleepStageNoficationEnabled {false};
 
       uint8_t currentSleepStage = 23; // 23 = Undefined
     };

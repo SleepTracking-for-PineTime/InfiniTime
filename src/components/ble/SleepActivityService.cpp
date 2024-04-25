@@ -1,18 +1,20 @@
 #include "SleepActivityService.h"
 
 #include <components/sleep/SleepController.h>
+#include "components/ble/NimbleController.h"
 
 int sleepActivityServiceCallback(uint16_t /*connHandle*/, uint16_t attrHandle, struct ble_gatt_access_ctxt* ctxt, void* arg) {
   auto* sleepActivityService = static_cast<Pinetime::Controllers::SleepActivityService*>(arg);
   return sleepActivityService->OnSleepStageRequested(attrHandle, ctxt);
 }
 
-Pinetime::Controllers::SleepActivityService::SleepActivityService(SleepController& sleepController)
- :  sleepController {sleepController},
+Pinetime::Controllers::SleepActivityService::SleepActivityService(NimbleController& nimble, SleepController& sleepController)
+  : nimble {nimble},
+    sleepController {sleepController},
     characteristicDefinition {{.uuid = &sleepStageCharacteristicUuid.u,
                               .access_cb = sleepActivityServiceCallback,
                               .arg = this,
-                              .flags = BLE_GATT_CHR_F_READ,
+                              .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_NOTIFY,
                               .val_handle = &sleepStageHandle},
                               {0}},
     serviceDefinition {
@@ -46,4 +48,29 @@ int Pinetime::Controllers::SleepActivityService::OnSleepStageRequested(uint16_t 
 
 void Pinetime::Controllers::SleepActivityService::OnNewSleepStage(uint8_t sleepStage) {
   currentSleepStage = sleepStage;
+
+  if (sleepStageNoficationEnabled) {
+    uint16_t connectionHandle = nimble.connHandle();
+
+    if (connectionHandle == 0 || connectionHandle == BLE_HS_CONN_HANDLE_NONE) {
+      return;
+    }
+
+    auto* om = ble_hs_mbuf_from_flat(&sleepStage, 1);
+    ble_gattc_notify_custom(connectionHandle, sleepStageHandle, om);
+  }
+}
+
+void Pinetime::Controllers::SleepActivityService::SubscribeNotification(uint16_t attributeHandle) {
+  if (attributeHandle == sleepStageHandle)
+    sleepStageNoficationEnabled = true;
+}
+
+void Pinetime::Controllers::SleepActivityService::UnsubscribeNotification(uint16_t attributeHandle) {
+  if (attributeHandle == sleepStageHandle)
+    sleepStageNoficationEnabled = false;
+}
+
+bool Pinetime::Controllers::SleepActivityService::IsSleepStageNotificationSubscribed() const {
+  return sleepStageNoficationEnabled;
 }
